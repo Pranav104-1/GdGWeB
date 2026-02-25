@@ -4,6 +4,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectdb from "./src/db/db.js";
 import authRoutes from "./src/routes/auth.routes.js";
+import adminRoutes from "./src/routes/admin.routes.js";
+import quizRoutes from "./src/routes/quiz.routes.js";
 
 dotenv.config();
 
@@ -11,7 +13,7 @@ const app = express();
 
 // ============== CORS CONFIGURATION ==============
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:5000",
+  origin: process.env.FRONTEND_URL || "http://localhost:5000"  || "*",
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -32,6 +34,8 @@ app.get("/api/health", (req, res) => {
 
 // ============== API ROUTES ==============
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/quiz", quizRoutes);
 
 // ============== ERROR HANDLING ==============
 app.use((err, req, res, next) => {
@@ -48,15 +52,20 @@ app.use((req, res) => {
 });
 
 // ============== START SERVER ==============
-connectdb()
-  .then(() => {
-    app.listen(process.env.PORT, () => {
+const startServer = async () => {
+  try {
+    // Connect to database
+    const dbConnection = await connectdb();
+    
+    // Start server regardless of DB connection status
+    const server = app.listen(process.env.PORT, () => {
       console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                   Server is Running                        ║
 ╠═══════════════════════════════════════════════════════════╣
 ║ Port: ${process.env.PORT}                                         ║
 ║ Environment: ${process.env.NODE_ENV}                                  ║
+║ Database: ${dbConnection ? '✅ Connected' : '❌ Not Connected'}                             ║
 ║ Frontend URL: ${process.env.FRONTEND_URL}      ║
 ╠═══════════════════════════════════════════════════════════╣
 ║ API Endpoints:                                             ║
@@ -74,11 +83,15 @@ connectdb()
 ╚═══════════════════════════════════════════════════════════╝
       `);
     });
-  })
-  .catch((err) => {
-    console.error("Failed to start server:", err.message);
+
+    return server;
+  } catch (err) {
+    console.error("❌ Error starting server:", err.message);
     process.exit(1);
-  });
+  }
+};
+
+startServer();
 
 export default app;
 

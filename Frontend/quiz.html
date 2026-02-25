@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Dev Quiz</title>
+
+<style>
+
+/* =========================
+   DARK MODE BASE
+========================= */
+body{
+    margin:0;
+    background:#0f1117;
+    color:#e6e6e6;
+    font-family:system-ui, sans-serif;
+}
+
+.quiz-container{
+    max-width:700px;
+    margin:40px auto;
+    padding:20px;
+}
+
+.quiz-header{
+    text-align:center;
+}
+
+.quiz-header h1{
+    font-size:2.4rem;
+    background:linear-gradient(135deg,#8ab4ff,#b388ff);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+/* progress */
+.quiz-progress{
+    width:100%;
+    height:8px;
+    background:#222;
+    border-radius:5px;
+    margin:25px 0;
+    overflow:hidden;
+}
+
+.quiz-progress-bar{
+    height:100%;
+    background:linear-gradient(90deg,#8ab4ff,#b388ff);
+    transition:.3s;
+}
+
+/* question card */
+.quiz-question{
+    background:#1a1d26;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,.6);
+}
+
+.question-number{
+    color:#8ab4ff;
+    font-size:.9rem;
+}
+
+.question-text{
+    font-size:1.3rem;
+    margin:15px 0;
+    font-weight:600;
+}
+
+.options{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.option{
+    padding:15px;
+    border-radius:8px;
+    border:2px solid #2e3342;
+    background:#20232e;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.option:hover{
+    background:#2a2f40;
+    border-color:#8ab4ff;
+}
+
+.option.selected{
+    background:#283048;
+    border-color:#8ab4ff;
+}
+
+.option input{
+    margin-right:10px;
+}
+
+/* buttons */
+.quiz-controls{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+.btn{
+    flex:1;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn-prev{
+    background:#2a2f40;
+    color:white;
+}
+
+.btn-next{
+    background:linear-gradient(135deg,#8ab4ff,#b388ff);
+    color:white;
+}
+
+/* results */
+.quiz-results{
+    text-align:center;
+}
+
+.score{
+    font-size:3rem;
+    font-weight:bold;
+}
+
+/* snake canvas */
+#snakeCanvas{
+    position:fixed;
+    top:0;
+    left:0;
+    pointer-events:none;
+    z-index:9999;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="quiz-container">
+
+<div class="quiz-header">
+<h1>🧠 Web Development Quiz</h1>
+<p>Test your knowledge</p>
+</div>
+
+<div class="quiz-progress">
+<div class="quiz-progress-bar" id="progressBar"></div>
+</div>
+
+<div id="quizContent"></div>
+
+</div>
+
+<canvas id="snakeCanvas"></canvas>
+
+<script>
+
+/* =========================
+   QUIZ DATA
+========================= */
+
+const quizQuestions=[
+{question:"What does HTML stand for?",
+options:["Hyper Text Markup Language","High Tech Modern Language","Home Tool Markup Language","Hyperlinks and Text Markup Language"],correct:0},
+
+{question:"Which CSS property changes text color?",
+options:["text-color","color","font-color","text-style"],correct:1},
+
+{question:"Correct JS variable declaration?",
+options:["variable x=5","var x=5","declare x=5","x := 5"],correct:1},
+
+{question:"Largest HTML heading?",
+options:["<h6>","<header>","<h1>","<head>"],correct:2},
+
+{question:"CSS stands for?",
+options:["Computer Style Sheets","Cascading Style Sheets","Creative Style Sheets","Colorful Style Sheets"],correct:1}
+];
+
+let currentQuestion=0;
+let answers=new Array(quizQuestions.length).fill(null);
+let score=0;
+
+function initQuiz(){
+currentQuestion=0;
+answers.fill(null);
+showQuestion();
+}
+
+function showQuestion(){
+
+const q=quizQuestions[currentQuestion];
+const progress=((currentQuestion+1)/quizQuestions.length)*100;
+document.getElementById("progressBar").style.width=progress+"%";
+
+let html=`
+<div class="quiz-question">
+<div class="question-number">Question ${currentQuestion+1}/${quizQuestions.length}</div>
+<div class="question-text">${q.question}</div>
+<div class="options">
+`;
+
+q.options.forEach((opt,i)=>{
+html+=`
+<label class="option ${answers[currentQuestion]===i?'selected':''}">
+<input type="radio" name="ans" value="${i}" ${answers[currentQuestion]===i?'checked':''}>
+${opt}
+</label>`;
+});
+
+html+=`</div></div>
+
+<div class="quiz-controls">
+<button class="btn btn-prev" onclick="prevQuestion()" ${currentQuestion===0?'disabled':''}>Previous</button>
+<button class="btn btn-next" onclick="nextQuestion()">
+${currentQuestion===quizQuestions.length-1?'Finish':'Next'}
+</button>
+</div>
+`;
+
+document.getElementById("quizContent").innerHTML=html;
+
+document.querySelectorAll('input[name="ans"]').forEach(el=>{
+el.addEventListener("change",e=>{
+answers[currentQuestion]=parseInt(e.target.value);
+document.querySelectorAll(".option").forEach(o=>o.classList.remove("selected"));
+e.target.parentElement.classList.add("selected");
+});
+});
+}
+
+function nextQuestion(){
+if(currentQuestion<quizQuestions.length-1){
+currentQuestion++;
+showQuestion();
+}else finishQuiz();
+}
+
+function prevQuestion(){
+currentQuestion--;
+showQuestion();
+}
+
+function finishQuiz(){
+score=0;
+answers.forEach((a,i)=>{
+if(a===quizQuestions[i].correct) score++;
+});
+
+document.getElementById("quizContent").innerHTML=`
+<div class="quiz-results">
+<h2>Quiz Complete!</h2>
+<div class="score">${score}/${quizQuestions.length}</div>
+<p>${Math.round(score/quizQuestions.length*100)}% Correct</p>
+<button class="btn btn-next" onclick="initQuiz()">Try Again</button>
+</div>
+`;
+
+document.getElementById("progressBar").style.width="100%";
+}
+
+window.onload=initQuiz;
+
+/* =========================
+   CURSOR SNAKE EFFECT
+========================= */
+
+const canvas=document.getElementById("snakeCanvas");
+const ctx=canvas.getContext("2d");
+
+function resize(){
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+}
+resize();
+window.onresize=resize;
+
+let mouse={x:window.innerWidth/2,y:window.innerHeight/2};
+window.onmousemove=e=>{
+mouse.x=e.clientX;
+mouse.y=e.clientY;
+};
+
+const snake=[];
+const length=25;
+
+for(let i=0;i<length;i++)
+snake.push({x:mouse.x,y:mouse.y});
+
+function animate(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+snake[0].x+=(mouse.x-snake[0].x)*0.25;
+snake[0].y+=(mouse.y-snake[0].y)*0.25;
+
+for(let i=1;i<snake.length;i++){
+snake[i].x+=(snake[i-1].x-snake[i].x)*0.35;
+snake[i].y+=(snake[i-1].y-snake[i].y)*0.35;
+}
+
+snake.forEach((s,i)=>{
+const size=12-i*0.4;
+
+const g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,size);
+g.addColorStop(0,`hsl(${Date.now()/20+i*10},100%,60%)`);
+g.addColorStop(1,"transparent");
+
+ctx.beginPath();
+ctx.arc(s.x,s.y,size,0,Math.PI*2);
+ctx.fillStyle=g;
+ctx.fill();
+});
+
+requestAnimationFrame(animate);
+}
+
+animate();
+
+</script>
+</body>
+</html>

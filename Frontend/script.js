@@ -1,10 +1,11 @@
 // ==================== API CONFIGURATION ==============
+// base URL should point to /api only, not including /auth or trailing slash
 const API_BASE_URL = 'http://localhost:4565/api';
 const AUTH_API = `${API_BASE_URL}/auth`;
 
 // ==================== API HELPER CLASS ==============
 class AuthAPI {
-  // Send OTP
+  // Send OTP for login
   static async sendOTP(email) {
     try {
       const response = await fetch(`${AUTH_API}/send-otp`, {
@@ -20,23 +21,14 @@ class AuthAPI {
     }
   }
 
-  // Verify OTP & Register
-  static async verifyOTP(email, otp, username, password, firstName, lastName, phone, areasOfInterest) {
+  // Verify OTP for login
+  static async verifyOTPLogin(email, otp) {
     try {
       const response = await fetch(`${AUTH_API}/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          email,
-          otp,
-          username,
-          password,
-          firstName,
-          lastName,
-          phone,
-          areasOfInterest,
-        }),
+        body: JSON.stringify({ email, otp }),
       });
       const data = await response.json();
       if (data.token) {
@@ -51,7 +43,7 @@ class AuthAPI {
     }
   }
 
-  // Login
+  // Login with email and password
   static async login(email, password) {
     try {
       const response = await fetch(`${AUTH_API}/login`, {
@@ -69,6 +61,35 @@ class AuthAPI {
       return data;
     } catch (error) {
       console.error('Error logging in:', error);
+      return { error: error.message };
+    }
+  }
+
+  // Register with email, username, password (NO OTP REQUIRED)
+  static async register(email, username, password, firstName = '', lastName = '', phone = '') {
+    try {
+      const response = await fetch(`${AUTH_API}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          email,
+          username,
+          password,
+          firstName,
+          lastName,
+          phone,
+        }),
+      });
+      const data = await response.json();
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+      return data;
+    } catch (error) {
+      console.error('Error registering:', error);
       return { error: error.message };
     }
   }
@@ -217,17 +238,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const isDarkMode = localStorage.getItem('darkMode') === 'true';
     if (isDarkMode) {
         document.body.classList.add('dark-mode');
-        darkModeBtn.textContent = '☀️';
+        if (darkModeBtn) {
+            darkModeBtn.textContent = '☀️';
+        }
         createCyberGlowEffect();
     } else {
         document.body.classList.remove('dark-mode');
-        darkModeBtn.textContent = '🌙';
+        if (darkModeBtn) {
+            darkModeBtn.textContent = '🌙';
+        }
     }
 });
 
 // Toggle dark mode
 if (darkModeBtn) {
-    darkModeBtn.addEventListener('click', () => {
+    darkModeBtn.addEventListener('click', (evt) => {
         document.body.classList.toggle('dark-mode');
         const isDarkMode = document.body.classList.contains('dark-mode');
         localStorage.setItem('darkMode', isDarkMode);
@@ -236,7 +261,7 @@ if (darkModeBtn) {
         
         // Create particle burst effect when toggling
         if (isDarkMode) {
-            createParticleBurst(event);
+            createParticleBurst(evt);
             createCyberGlowEffect();
         }
         
@@ -924,7 +949,7 @@ async function handleOTPLogin(event) {
         return;
     }
 
-    // Verify OTP
+    // Verify OTP for login
     const otp = document.getElementById('login-otp').value.trim();
 
     if (!otp || otp.length !== 6 || !/^\d{6}$/.test(otp)) {
@@ -933,15 +958,13 @@ async function handleOTPLogin(event) {
     }
 
     try {
+        const submitBtn = document.querySelector('#loginStep2 button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Verifying...';
+
         const response = await AuthAPI.verifyOTP(
             otpLoginState.email,
-            otp,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
+            otp
         );
 
         if (response.error) {
@@ -952,13 +975,13 @@ async function handleOTPLogin(event) {
             } else {
                 showFormError('login-otp-error', `Invalid OTP. ${3 - otpLoginState.otpAttempts} attempts remaining.`);
             }
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Verify OTP';
             return;
         }
 
         // OTP verified successfully - User is logged in
         clearFormError('login-otp-error');
-
-        // Show success message
         showSuccessModal('Login Successful!', 'Welcome back! Redirecting...');
 
         setTimeout(() => {
@@ -969,33 +992,37 @@ async function handleOTPLogin(event) {
     } catch (error) {
         console.error('Error verifying OTP:', error);
         showFormError('login-otp-error', 'Error verifying OTP. Please try again.');
+        document.querySelector('#loginStep2 button[type="submit"]').disabled = false;
+        document.querySelector('#loginStep2 button[type="submit"]').textContent = 'Verify OTP';
     }
 }
 
 // ==================== HANDLE PASSWORD LOGIN ==============
 async function handlePasswordLogin() {
     const email = document.getElementById('login-email-password').value.trim();
-    const password = document.getElementById('login-password').value;
+    const password = document.getElementById('login-password').value.trim();
+    const loginBtn = document.querySelector('#passwordLoginStep .btn-primary');
 
     if (!validateEmail(email)) {
         showFormError('login-email-pw-error', 'Please enter a valid email');
         return;
     }
 
-    if (!validatePassword(password)) {
-        showFormError('login-password-error', 'Password must be at least 6 characters');
+    if (password.length < 8) {
+        showFormError('login-password-error', 'Password must be at least 8 characters');
         return;
     }
 
     try {
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Logging in...';
+
         const response = await AuthAPI.login(email, password);
 
         if (response.error) {
-            if (response.requiresOTPVerification) {
-                showFormError('login-email-pw-error', 'Please verify your email first. Use OTP login.');
-            } else {
-                showFormError('login-email-pw-error', response.error || 'Invalid credentials');
-            }
+            showFormError('login-email-pw-error', response.error || 'Invalid credentials');
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Login';
             return;
         }
 
@@ -1009,37 +1036,29 @@ async function handlePasswordLogin() {
     } catch (error) {
         console.error('Error logging in:', error);
         showFormError('login-email-pw-error', 'Error logging in. Please try again.');
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Login';
     }
 }
 
-// ==================== TOGGLE TO OTP LOGIN ==============
-function toggleToOTPLogin() {
+// ==================== SHOW OTP LOGIN ==============
+function showOTPLogin() {
     clearFormError('login-email-pw-error');
     clearFormError('login-password-error');
     
-    document.getElementById('loginStep1').classList.add('active');
-    document.getElementById('loginStep3').classList.remove('active');
-    
-    clearOTPLoginState();
+    document.getElementById('passwordLoginStep').classList.remove('active');
+    document.getElementById('otpLoginStep').classList.add('active');
 }
 
-// ==================== TOGGLE TO PASSWORD LOGIN ==============
-function toggleToPasswordLogin() {
-    clearFormError('login-email-error');
-    
-    document.getElementById('loginStep1').classList.remove('active');
-    document.getElementById('loginStep3').classList.add('active');
-    
-    clearOTPLoginState();
-}
-
-// ==================== GO BACK TO EMAIL INPUT ==============
-function goBackToEmail() {
+// ==================== SHOW PASSWORD LOGIN ==============
+function showPasswordLogin() {
+    clearFormError('otp-email-error');
     clearFormError('login-otp-error');
     document.getElementById('login-otp').value = '';
+    document.getElementById('otpInputSection').style.display = 'none';
     
-    document.getElementById('loginStep1').classList.add('active');
-    document.getElementById('loginStep2').classList.remove('active');
+    document.getElementById('otpLoginStep').classList.remove('active');
+    document.getElementById('passwordLoginStep').classList.add('active');
     
     clearOTPLoginState();
 }
@@ -1094,15 +1113,16 @@ function handleLogin(event) {
     }
 }
 
-function handleSignup(event) {
+async function handleSignup(event) {
     event.preventDefault();
     clearFormErrors('signup');
 
-    const name = document.getElementById('signup-name').value;
-    const email = document.getElementById('signup-email').value;
-    const password = document.getElementById('signup-password').value;
-    const confirm = document.getElementById('signup-confirm').value;
+    const name = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value.trim();
+    const confirm = document.getElementById('signup-confirm').value.trim();
     const terms = document.querySelector('input[name="terms"]').checked;
+    const submitBtn = event.target.querySelector('button[type="submit"]');
 
     let isValid = true;
 
@@ -1117,8 +1137,8 @@ function handleSignup(event) {
         isValid = false;
     }
 
-    if (!validatePassword(password)) {
-        showFormError('signup-password-error', 'Password must be at least 6 characters');
+    if (password.length < 8) {
+        showFormError('signup-password-error', 'Password must be at least 8 characters');
         isValid = false;
     }
 
@@ -1132,19 +1152,45 @@ function handleSignup(event) {
         isValid = false;
     }
 
-    if (isValid) {
-        showSuccessModal('Account Created!', 'Welcome to GDG! Redirecting to home page...');
+    if (!isValid) return;
 
+    // Disable submit button
+    submitBtn.disabled = true;
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Creating Account...';
+
+    try {
+        // Register directly with password (no OTP required)
+        const username = email.split('@')[0].toLowerCase();
+        const regResp = await AuthAPI.register(
+            email,
+            username,
+            password,
+            name.split(' ')[0],  // firstName
+            name.split(' ').slice(1).join(' ') || '',  // lastName
+            ''
+        );
+
+        if (regResp.error) {
+            showFormError('signup-email-error', regResp.error);
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+            return;
+        }
+
+        // Success: Clear form and redirect
+        event.target.reset();
+        showSuccessModal('Account Created!', 'Welcome to GDG! You are now registered. Redirecting...');
+        
         setTimeout(() => {
-            // Store user data
-            const user = {
-                name: name,
-                email: email,
-                signupTime: new Date().toLocaleString()
-            };
-            localStorage.setItem('gdg_user', JSON.stringify(user));
             window.location.href = 'index.html';
         }, 2000);
+
+    } catch (err) {
+        console.error('Error during signup:', err);
+        showFormError('signup-email-error', err.message || 'Unable to register. Please try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
     }
 }
 

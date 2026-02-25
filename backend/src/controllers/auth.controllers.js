@@ -12,7 +12,8 @@ import {
   sendWelcomeEmail,
 } from "../utils/email.utils.js";
 
-// ============== SEND OTP ==============
+// ============== SEND OTP FOR LOGIN ==============
+// This endpoint is only for OTP-based login, not for registration
 export const sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
@@ -21,31 +22,27 @@ export const sendOTP = async (req, res) => {
       return res.status(400).json({ error: "Email is required" });
     }
 
-    // Check if user already exists
-    let user = await auth.findOne({ email });
+    // Check if user exists (must be registered)
+    const user = await auth.findOne({ email });
+
+    if (!user) {
+      // User doesn't exist - direct them to register first
+      return res.status(404).json({ 
+        error: "User not found. Please register first.",
+        requiresRegistration: true,
+      });
+    }
 
     // Generate OTP
     const otp = generateOTP();
     const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    if (user) {
-      // User exists - update OTP
-      user.otp = otp;
-      user.otpExpiry = otpExpiry;
-      user.otpAttempts = 0;
-      user.lastOtpSent = new Date();
-      await user.save();
-    } else {
-      // New user - create temporary entry
-      user = await auth.create({
-        email,
-        otp,
-        otpExpiry,
-        lastOtpSent: new Date(),
-        username: email.split("@")[0], // Default username
-        password: "",
-      });
-    }
+    // Update existing user with OTP
+    user.otp = otp;
+    user.otpExpiry = otpExpiry;
+    user.otpAttempts = 0;
+    user.lastOtpSent = new Date();
+    await user.save();
 
     // Send OTP email
     const emailResult = await sendOTPEmail(email, otp, user.username);
@@ -70,11 +67,11 @@ export const sendOTP = async (req, res) => {
   }
 };
 
-// ============== VERIFY OTP ==============
-export const verifyOTP = async (req, res) => {
+// ============== VERIFY OTP LOGIN ==============
+// This endpoint verifies OTP for login only (not for registration)
+export const verifyOTPLogin = async (req, res) => {
   try {
-    const { email, otp, username, password, firstName, lastName, phone } =
-      req.body;
+    const { email, otp } = req.body;
 
     if (!email || !otp) {
       return res
@@ -83,12 +80,12 @@ export const verifyOTP = async (req, res) => {
     }
 
     // Find user
-    let user = await auth
+    const user = await auth
       .findOne({ email })
       .select("+otp +otpExpiry +otpAttempts");
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "User not found. Please register first." });
     }
 
     // Check if OTP is expired
@@ -111,27 +108,16 @@ export const verifyOTP = async (req, res) => {
       return res.status(400).json({ error: "Invalid OTP" });
     }
 
-    // OTP verified successfully
+    // OTP verified successfully - clear OTP fields
     user.isEmailVerified = true;
-    user.clearOTP();
-
-    // Update user details if this is registration
-    if (password) {
-      user.password = password;
-      user.username = username || email.split("@")[0];
-    }
-    if (firstName) user.firstName = firstName;
-    if (lastName) user.lastName = lastName;
-    if (phone) user.phone = phone;
-
+    user.otp = undefined;
+    user.otpExpiry = undefined;
+    user.otpAttempts = 0;
     await user.save();
 
     // Generate tokens
     const token = generateToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
-
-    // Send welcome email
-    await sendWelcomeEmail(email, user.username);
 
     // Set cookies
     res.cookie("token", token, {
@@ -151,7 +137,7 @@ export const verifyOTP = async (req, res) => {
     });
 
     return res.status(200).json({
-      message: "Email verified successfully",
+      message: "OTP verified successfully. Logged in!",
       token,
       refreshToken,
       user: {
@@ -164,7 +150,7 @@ export const verifyOTP = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error in verifyOTP:", error);
+    console.error("Error in verifyOTPLogin:", error);
     return res.status(500).json({
       error: "Failed to verify OTP",
       details: error.message,
@@ -173,39 +159,89 @@ export const verifyOTP = async (req, res) => {
 };
 
 // ============== REGISTER ==============
+// Simple password-based registration - no OTP required
 export const register = async (req, res) => {
   try {
-    const { email, otp, username, password, firstName, lastName, phone } =
-      req.body;
+    const { email, username, password, firstName = '', lastName = '', phone = '' } = req.body;
 
-    if (!email || !otp || !username || !password) {
+    // Validate required fields
+    if (!email || !username || !password) {
       return res.status(400).json({
-        error: "Email, OTP, username, and password are required",
+        error: "Email, username, and password are required",
       });
     }
 
-    // Check if username already exists
-    const existingUser = await auth.findOne({ username });
-    if (existingUser) {
-      return res.status(409).json({ error: "Username already exists" });
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
     }
 
-    // Verify OTP first
-    const otpResult = await verifyOTPInternal(
+    // Validate password strength (minimum 8 characters)
+    if (password.length < 8) {
+      return res.status(400).json({ error: "Password must be at least 8 characters long" });
+    }
+
+    // Check if email already exists
+    const existingEmail = await auth.findOne({ email });
+    if (existingEmail) {
+      return res.status(409).json({ error: "Email already registered. Please login." });
+    }
+
+    // Check if username already exists
+    const existingUsername = await auth.findOne({ username });
+    if (existingUsername) {
+      return res.status(409).json({ error: "Username already taken. Choose a different one." });
+    }
+
+    // Create new user
+    const newUser = await auth.create({
       email,
-      otp,
       username,
-      password,
+      password, // Will be hashed by mongoose pre-save middleware
       firstName,
       lastName,
-      phone
-    );
+      phone,
+      isEmailVerified: true, // Password registration doesn't need email verification
+    });
 
-    if (!otpResult.success) {
-      return res.status(400).json({ error: otpResult.error });
-    }
+    // Generate tokens
+    const token = generateToken(newUser._id);
+    const refreshToken = generateRefreshToken(newUser._id);
 
-    return res.status(201).json(otpResult);
+    // Send welcome email
+    await sendWelcomeEmail(email, username);
+
+    // Set cookies
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(201).json({
+      message: "Registration successful!",
+      token,
+      refreshToken,
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        isEmailVerified: true,
+      },
+    });
   } catch (error) {
     console.error("Error in register:", error);
     return res.status(500).json({
