@@ -1,6 +1,6 @@
 // ==================== API CONFIGURATION ==============
 // base URL should point to /api only, not including /auth or trailing slash
-const API_BASE_URL = "http://localhost:4565/api";
+const API_BASE_URL = "https://gd-g-we-b.vercel.app/api";
 const AUTH_API = `${API_BASE_URL}/auth`;
 
 // ==================== API HELPER CLASS ==============
