@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Google Developer Group</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🔧</span>
+                <span class="logo-text">GDG</span>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html#home" class="nav-link">Home</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="index.html#events" class="nav-link">Events</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
+                <li><a href="register.html" class="nav-link">Register</a></li>
+                <li><button id="darkModeBtn" class="dark-mode-btn" title="Toggle Dark Mode">🌙</button></li>
+                <li><a href="login.html" class="nav-link auth-link">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contact Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <h1 class="about-hero-title">Get In Touch</h1>
+            <p class="about-hero-subtitle">We'd love to hear from you. Reach out to us with any questions or feedback.</p>
+        </div>
+    </section>
+
+    <!-- Contact Content Section -->
+    <section class="contact-section page-section">
+        <div class="container">
+            <div class="contact-grid">
+                <!-- Contact Form -->
+                <div class="contact-form-wrapper slide-in-left">
+                    <h2>Send us a Message</h2>
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="6" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="contact-info-wrapper slide-in-right">
+                    <h2>Contact Information</h2>
+                    
+                    <div class="contact-info-item">
+                        <div class="info-icon">📍</div>
+                        <h3>Address</h3>
+                        <p>Tech Hub, Innovation District<br>Silicon Valley, CA 94025<br>United States</p>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="info-icon">📧</div>
+                        <h3>Email</h3>
+                        <p><a href="mailto:hello@gdg.com">hello@gdg.com</a><br><a href="mailto:events@gdg.com">events@gdg.com</a></p>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="info-icon">📱</div>
+                        <h3>Phone</h3>
+                        <p><a href="tel:+1234567890">+1 (234) 567-890</a></p>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="info-icon">🕐</div>
+                        <h3>Office Hours</h3>
+                        <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 4:00 PM<br>Sunday: Closed</p>
+                    </div>
+
+                    <div class="social-links-contact">
+                        <h3>Follow Us</h3>
+                        <div class="social-contact">
+                            <a href="#" class="social-link">Twitter</a>
+                            <a href="#" class="social-link">LinkedIn</a>
+                            <a href="#" class="social-link">Facebook</a>
+                            <a href="#" class="social-link">Instagram</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section page-section">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-grid">
+                <div class="faq-item slide-in-up">
+                    <h3>How do I join GDG?</h3>
+                    <p>You can join our community by registering on our website. Simply fill out the registration form with your details, and you'll get access to all our events and resources.</p>
+                </div>
+                <div class="faq-item slide-in-up">
+                    <h3>Are events free to attend?</h3>
+                    <p>Yes! Most of our events are absolutely free for registered members. We believe in making quality education accessible to everyone in our community.</p>
+                </div>
+                <div class="faq-item slide-in-up">
+                    <h3>Do I need prior experience?</h3>
+                    <p>Not at all! We welcome developers of all skill levels - from beginners to experts. Our events are designed to cater to diverse experience levels.</p>
+                </div>
+                <div class="faq-item slide-in-up">
+                    <h3>How often are events held?</h3>
+                    <p>We typically host 4-8 events per month covering different topics. Check our events page for the latest schedule and upcoming sessions.</p>
+                </div>
+                <div class="faq-item slide-in-up">
+                    <h3>Can I volunteer with GDG?</h3>
+                    <p>Absolutely! We're always looking for passionate community members to help organize events. Contact us at events@gdg.com to learn more about volunteering.</p>
+                </div>
+                <div class="faq-item slide-in-up">
+                    <h3>How can I stay updated?</h3>
+                    <p>Subscribe to our newsletter, follow our social media channels, and enable notifications on our website to stay informed about upcoming events and announcements.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>GDG</h3>
+                    <p>Building a community of developers</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="index.html#events">Events</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link">Twitter</a>
+                        <a href="#" class="social-link">Facebook</a>
+                        <a href="#" class="social-link">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Google Developer Group. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon">✓</div>
+            <h2 id="modalTitle">Message Sent!</h2>
+            <p id="modalMessage">Thank you for reaching out. We'll get back to you soon.</p>
+            <button class="btn btn-primary" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Contact Form Handler
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            // Store contact submission
+            const contacts = JSON.parse(localStorage.getItem('gdg_contacts') || '[]');
+            contacts.push({
+                name: formData.get('name'),
+                email: formData.get('email'),
+                subject: formData.get('subject'),
+                message: formData.get('message'),
+                submittedAt: new Date().toLocaleString()
+            });
+            localStorage.setItem('gdg_contacts', JSON.stringify(contacts));
+            
+            // Show success modal
+            showSuccessModal('Message Sent!', 'Thank you for contacting us. We\'ll respond shortly.');
+            
+            // Reset form
+            form.reset();
+        });
+    </script>
+</body>
+</html>

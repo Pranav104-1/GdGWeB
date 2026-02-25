@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Developer Group</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🔧</span>
+                <span class="logo-text">GDG</span>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="#events" class="nav-link">Events</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
+                <li><a href="register.html" class="nav-link">Register</a></li>
+                <li><button id="darkModeBtn" class="dark-mode-btn" title="Toggle Dark Mode">🌙</button></li>
+                <li><a href="login.html" class="nav-link auth-link">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Welcome to Google Developer Group</h1>
+            <p class="hero-subtitle">Build. Learn. Connect with developers worldwide</p>
+            <div class="hero-buttons">
+                <a href="#events" class="btn btn-primary">Explore Events</a>
+                <a href="login.html" class="btn btn-secondary">Sign In</a>
+            </div>
+        </div>
+        <div class="hero-animation">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2>About GDG</h2>
+            <div class="about-grid">
+                <div class="about-card slide-in-left" data-card-id="learn">
+                    <div class="card-icon">💡</div>
+                    <h3>Learn</h3>
+                    <p>Expand your knowledge with workshops and talks from industry experts.</p>
+                    <span class="card-link">Click to learn more →</span>
+                </div>
+                <div class="about-card slide-in-up" data-card-id="connect">
+                    <div class="card-icon">🤝</div>
+                    <h3>Connect</h3>
+                    <p>Build meaningful relationships with developers and tech enthusiasts.</p>
+                    <span class="card-link">Click to learn more →</span>
+                </div>
+                <div class="about-card slide-in-right" data-card-id="build">
+                    <div class="card-icon">🚀</div>
+                    <h3>Build</h3>
+                    <p>Create amazing projects and showcase your skills to the community.</p>
+                    <span class="card-link">Click to learn more →</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What We Offer Section -->
+    <section class="what-we-offer">
+        <div class="container">
+            <h2>Why Join Our Community?</h2>
+            <div class="offer-grid">
+                <div class="offer-card">
+                    <div class="offer-icon">📚</div>
+                    <h3>Expert Knowledge</h3>
+                    <p>Learn from industry experts and experienced developers through workshops, talks, and mentoring sessions.</p>
+                </div>
+                <div class="offer-card">
+                    <div class="offer-icon">🌐</div>
+                    <h3>Global Network</h3>
+                    <p>Connect with developers across the globe, build lasting relationships, and expand your professional network.</p>
+                </div>
+                <div class="offer-card">
+                    <div class="offer-icon">💼</div>
+                    <h3>Career Growth</h3>
+                    <p>Access job opportunities, mentorship programs, and career development resources exclusively for members.</p>
+                </div>
+                <div class="offer-card">
+                    <div class="offer-icon">🎯</div>
+                    <h3>Focused Projects</h3>
+                    <p>Collaborate on meaningful projects, build your portfolio, and create solutions that impact communities.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section id="events" class="events">
+        <div class="container">
+            <h2>Upcoming Events</h2>
+            <div class="events-filter">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="workshop">Workshops</button>
+                <button class="filter-btn" data-filter="talk">Talks</button>
+                <button class="filter-btn" data-filter="networking">Networking</button>
+            </div>
+            <div class="events-grid" id="eventsContainer">
+                <!-- Events will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <h2>What Our Members Say</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">👨‍💻</div>
+                        <div class="testimonial-info">
+                            <h4>Alex Kumar</h4>
+                            <p>Software Engineer</p>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">"GDG transformed my career. The workshops and networking opportunities helped me land my dream job. Highly recommended!"</p>
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">👩‍💻</div>
+                        <div class="testimonial-info">
+                            <h4>Sarah Johnson</h4>
+                            <p>Full Stack Developer</p>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">"The community here is amazing. I've learned so much and made friends who are now my collaborators in side projects."</p>
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">👨‍🎓</div>
+                        <div class="testimonial-info">
+                            <h4>Mike Chen</h4>
+                            <p>Student Developer</p>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">"As a beginner, GDG gave me the confidence to pursue tech. The mentors are supportive and the resources are top-notch."</p>
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter">
+        <div class="container newsletter-content">
+            <h2>Stay Updated</h2>
+            <p>Subscribe to our newsletter for event updates and community news</p>
+            <form class="newsletter-form" id="newsletterForm">
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit" class="btn btn-primary">Subscribe</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Event Detail Modal -->
+    <div class="modal" id="eventModal">
+        <div class="modal-content event-modal">
+            <button class="event-modal-close" onclick="closeEventModal()">&times;</button>
+            <div id="eventModalBody">
+                <!-- Event details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Details Modal -->
+    <div class="modal" id="cardDetailsModal">
+        <div class="modal-content card-modal">
+            <button class="modal-close" onclick="closeCardDetailsModal()">&times;</button>
+            <div class="modal-body" id="cardModalBody"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>GDG</h3>
+                    <p>Building a community of developers</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="#events">Events</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="https://twitter.com" class="social-link" target="_blank">Twitter</a>
+                        <a href="https://facebook.com" class="social-link" target="_blank">Facebook</a>
+                        <a href="https://linkedin.com" class="social-link" target="_blank">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Google Developer Group. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

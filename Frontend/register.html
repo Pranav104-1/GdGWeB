@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Google Developer Group</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🔧</span>
+                <span class="logo-text">GDG</span>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html#home" class="nav-link">Home</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="index.html#events" class="nav-link">Events</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
+                <li><a href="register.html" class="nav-link">Register</a></li>
+                <li><button id="darkModeBtn" class="dark-mode-btn" title="Toggle Dark Mode">🌙</button></li>
+                <li><a href="login.html" class="nav-link auth-link">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Register Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <h1 class="about-hero-title">Join Our Community</h1>
+            <p class="about-hero-subtitle">Register now to access exclusive events, resources, and networking opportunities.</p>
+        </div>
+    </section>
+
+    <!-- Register Section -->
+    <section class="register-section page-section">
+        <div class="container">
+            <div class="register-container">
+                <div class="register-form-wrapper slide-in-left">
+                    <h2>Create Your Account</h2>
+                    <form class="register-form" id="registerForm">
+                        <div class="form-group">
+                            <label for="reg-name">Full Name *</label>
+                            <input type="text" id="reg-name" name="name" required>
+                            <span class="form-error" id="name-error"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-email">Email Address *</label>
+                            <input type="email" id="reg-email" name="email" required>
+                            <span class="form-error" id="email-error"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-phone">Phone Number</label>
+                            <input type="tel" id="reg-phone" name="phone">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-company">Company/School</label>
+                            <input type="text" id="reg-company" name="company">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-profession">Profession/Role *</label>
+                            <select id="reg-profession" name="profession" required>
+                                <option value="">Select your role</option>
+                                <option value="student">Student</option>
+                                <option value="developer">Software Developer</option>
+                                <option value="designer">Designer</option>
+                                <option value="manager">Product Manager</option>
+                                <option value="entrepreneur">Entrepreneur</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <span class="form-error" id="profession-error"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-interests">Areas of Interest *</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox">
+                                    <input type="checkbox" name="interests" value="web">
+                                    Web Development
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="interests" value="mobile">
+                                    Mobile Development
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="interests" value="cloud">
+                                    Cloud Computing
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="interests" value="ai">
+                                    AI/Machine Learning
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="interests" value="devops">
+                                    DevOps
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="interests" value="iot">
+                                    IoT & Hardware
+                                </label>
+                            </div>
+                            <span class="form-error" id="interests-error"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-experience">Experience Level *</label>
+                            <select id="reg-experience" name="experience" required>
+                                <option value="">Select level</option>
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                                <option value="expert">Expert</option>
+                            </select>
+                            <span class="form-error" id="experience-error"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" name="newsletter" checked>
+                                Subscribe to our newsletter for updates and announcements
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" name="terms" required>
+                                I agree to the Terms of Service and Privacy Policy *
+                            </label>
+                            <span class="form-error" id="terms-error"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 14px 30px;">Register Now</button>
+                    </form>
+                    <p class="login-link">Already registered? <a href="login.html">Log in here</a></p>
+                </div>
+
+                <!-- Benefits Section -->
+                <div class="register-benefits-wrapper slide-in-right">
+                    <h2>Why Join GDG?</h2>
+                    
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🎓</div>
+                        <h3>Learn from Experts</h3>
+                        <p>Access workshops and talks conducted by industry professionals and thought leaders.</p>
+                    </div>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🤝</div>
+                        <h3>Network & Connect</h3>
+                        <p>Meet and collaborate with thousands of developers in your community.</p>
+                    </div>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon">💼</div>
+                        <h3>Career Growth</h3>
+                        <p>Stay updated with industry trends and connect with potential employers.</p>
+                    </div>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🎁</div>
+                        <h3>Exclusive Perks</h3>
+                        <p>Get free access to resources, tools, and Google Cloud credits.</p>
+                    </div>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🏆</div>
+                        <h3>Recognition</h3>
+                        <p>Showcase your achievements and build your professional reputation.</p>
+                    </div>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🌍</div>
+                        <h3>Global Community</h3>
+                        <p>Join a worldwide network of developers sharing knowledge and experiences.</p>
+                    </div>
+
+                    <div class="benefits-stats">
+                        <div class="stat">
+                            <h4>5000+</h4>
+                            <p>Active Members</p>
+                        </div>
+                        <div class="stat">
+                            <h4>50+</h4>
+                            <p>Events/Year</p>
+                        </div>
+                        <div class="stat">
+                            <h4>100%</h4>
+                            <p>Free</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section page-section">
+        <div class="container">
+            <h2 class="section-title">What Members Say</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card slide-in-up">
+                    <div class="testimonial-content">
+                        <p>"GDG has been instrumental in my career growth. The events are top-notch and the community is incredibly supportive!"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👨‍💻</div>
+                        <div>
+                            <h4>John Doe</h4>
+                            <p>Full Stack Developer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card slide-in-up">
+                    <div class="testimonial-content">
+                        <p>"As a beginner, I found GDG to be the perfect place to learn, ask questions, and connect with experienced developers."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👩‍💻</div>
+                        <div>
+                            <h4>Sarah Smith</h4>
+                            <p>Junior Developer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card slide-in-up">
+                    <div class="testimonial-content">
+                        <p>"The networking opportunities at GDG helped me find amazing collaborators for my startup venture!"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👨‍🚀</div>
+                        <div>
+                            <h4>Mike Chen</h4>
+                            <p>Entrepreneur</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>GDG</h3>
+                    <p>Building a community of developers</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="index.html#events">Events</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link">Twitter</a>
+                        <a href="#" class="social-link">Facebook</a>
+                        <a href="#" class="social-link">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Google Developer Group. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon">✓</div>
+            <h2 id="modalTitle">Registration Successful!</h2>
+            <p id="modalMessage">Welcome to GDG! Check your email for a confirmation message.</p>
+            <button class="btn btn-primary" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Register Form Handler
+        document.getElementById('registerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            // Get selected interests
+            const interests = [];
+            document.querySelectorAll('input[name="interests"]:checked').forEach(checkbox => {
+                interests.push(checkbox.value);
+            });
+            
+            // Validation
+            if (!formData.get('name') || formData.get('name').length < 2) {
+                document.getElementById('name-error').textContent = 'Please enter a valid name';
+                return;
+            }
+            
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.get('email'))) {
+                document.getElementById('email-error').textContent = 'Please enter a valid email';
+                return;
+            }
+            
+            if (!formData.get('profession')) {
+                document.getElementById('profession-error').textContent = 'Please select your profession';
+                return;
+            }
+            
+            if (interests.length === 0) {
+                document.getElementById('interests-error').textContent = 'Please select at least one area of interest';
+                return;
+            }
+            
+            if (!formData.get('experience')) {
+                document.getElementById('experience-error').textContent = 'Please select your experience level';
+                return;
+            }
+            
+            if (!formData.get('terms')) {
+                document.getElementById('terms-error').textContent = 'Please accept the terms and conditions';
+                return;
+            }
+            
+            // Store registration
+            const registrations = JSON.parse(localStorage.getItem('gdg_registrations') || '[]');
+            registrations.push({
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                company: formData.get('company'),
+                profession: formData.get('profession'),
+                interests: interests,
+                experience: formData.get('experience'),
+                newsletter: formData.get('newsletter') ? true : false,
+                registeredAt: new Date().toLocaleString()
+            });
+            localStorage.setItem('gdg_registrations', JSON.stringify(registrations));
+            
+            // Show success modal
+            showSuccessModal('Registration Successful!', 'Welcome to GDG! Check your email for confirmation details and event information.');
+            
+            // Reset form
+            form.reset();
+        });
+    </script>
+</body>
+</html>
