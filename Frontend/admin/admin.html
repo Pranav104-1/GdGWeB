@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GDG Admin Panel</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+
+<body class="dark">
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h2>⚙️ GDG Admin</h2>
+    <a href="#">Dashboard</a>
+    <a href="#">Members</a>
+    <a href="index.html">🏠 Home</a>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+<header class="topbar">
+    <h1>GDG Members</h1>
+    <button id="addStudentBtn" class="primary-btn">+ Add Student</button>
+</header>
+
+<!-- Stats -->
+<div class="stats">
+    <div class="card">
+        <h3>Total Members</h3>
+        <p id="totalMembers">0</p>
+    </div>
+    <div class="card">
+        <h3>Active Students</h3>
+        <p id="activeMembers">0</p>
+    </div>
+</div>
+
+<!-- Search -->
+<input type="text" id="searchInput" placeholder="🔍 Search students...">
+
+<!-- Table -->
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Course</th>
+<th>Year</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="studentTable"></tbody>
+</table>
+
+</div>
+
+<!-- ADD MODAL -->
+<div id="modal" class="modal">
+<div class="modal-content">
+
+<h2>Add GDG Student</h2>
+
+<input id="name" placeholder="Student Name">
+<input id="email" placeholder="Email">
+<input id="course" placeholder="Course">
+<input id="year" placeholder="Year">
+
+<div class="modal-buttons">
+<button onclick="addStudent()" class="primary-btn">Add</button>
+<button onclick="closeModal()" class="secondary-btn">Cancel</button>
+</div>
+
+</div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>

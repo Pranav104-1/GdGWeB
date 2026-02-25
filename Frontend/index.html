@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Developer Group</title>
+    <title>GDG CSMU - Google Developer Group at CSMU College</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
         <div class="nav-container">
             <div class="nav-logo">
                 <span class="logo-icon">🔧</span>
-                <span class="logo-text">GDG</span>
+                <span class="logo-text">GDG CSMU</span>
             </div>
             <div class="hamburger" id="hamburger">
                 <span></span>
@@ -34,27 +34,22 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero Section with Orbit System -->
     <section id="home" class="hero">
         <div class="hero-content">
-            <h1 class="hero-title">Welcome to Google Developer Group</h1>
-            <p class="hero-subtitle">Build. Learn. Connect with developers worldwide</p>
+            <h1 class="hero-title"><span id="typewriter"></span></h1>
+            <p class="hero-subtitle">Join our community of passionate developers, innovators, and tech enthusiasts</p>
             <div class="hero-buttons">
                 <a href="#events" class="btn btn-primary">Explore Events</a>
                 <a href="login.html" class="btn btn-secondary">Sign In</a>
             </div>
-        </div>
-        <div class="hero-animation">
-            <div class="floating-shape shape-1"></div>
-            <div class="floating-shape shape-2"></div>
-            <div class="floating-shape shape-3"></div>
         </div>
     </section>
 
     <!-- About Section -->
     <section id="about" class="about">
         <div class="container">
-            <h2>About GDG</h2>
+            <h2>About GDG CSMU</h2>
             <div class="about-grid">
                 <div class="about-card slide-in-left" data-card-id="learn">
                     <div class="card-icon">💡</div>
@@ -195,13 +190,81 @@
         </div>
     </div>
 
+    <!-- Event Registration Modal -->
+    <div class="modal" id="eventRegistrationModal">
+        <div class="modal-content registration-modal">
+            <button class="modal-close" onclick="closeEventRegistrationModal()">&times;</button>
+            <div class="registration-header">
+                <h2>Register for Event</h2>
+                <p class="event-name" id="eventNameDisplay"></p>
+            </div>
+            <form id="eventRegistrationForm" class="event-registration-form">
+                <div class="form-group">
+                    <label for="regName">Full Name *</label>
+                    <input type="text" id="regName" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regEmail">Email *</label>
+                    <input type="email" id="regEmail" name="email" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regBranch">Branch *</label>
+                        <select id="regBranch" name="branch" required>
+                            <option value="">Select Branch</option>
+                            <option value="CS">Computer Science</option>
+                            <option value="IT">Information Technology</option>
+                            <option value="ECE">Electronics & Communication</option>
+                            <option value="ME">Mechanical Engineering</option>
+                            <option value="CE">Civil Engineering</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regYear">Year *</label>
+                        <select id="regYear" name="year" required>
+                            <option value="">Select Year</option>
+                            <option value="1st">1st Year</option>
+                            <option value="2nd">2nd Year</option>
+                            <option value="3rd">3rd Year</option>
+                            <option value="4th">4th Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="regDepartment">Department *</label>
+                    <input type="text" id="regDepartment" name="department" placeholder="e.g., Software Development" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Register Now</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeEventRegistrationModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success/Error Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Success</h2>
+            <p id="modalMessage">Your action was successful!</p>
+            <button class="btn btn-primary" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer" id="contact">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>GDG</h3>
-                    <p>Building a community of developers</p>
+                    <h3>GDG CSMU</h3>
+                    <p>Building a community of developers at CSMU College</p>
+                    <p><strong>Location:</strong> Panvel, Old Shendunga Toll Naka</p>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>
@@ -221,11 +284,11 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Google Developer Group. All rights reserved.</p>
+                <p>&copy; 2026 Google Developer Group CSMU, Panvel. All rights reserved.</p>
             </div>
         </div>
     </footer>
-
+    <canvas id="snakeCanvas"></canvas>
     <script src="script.js"></script>
 </body>
 </html>
