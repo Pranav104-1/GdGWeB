@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    const isDarkMode = localStorage.getItem('darkMode') !== 'false';
     if (isDarkMode) {
         document.body.classList.add('dark-mode');
         if (darkModeBtn) {
