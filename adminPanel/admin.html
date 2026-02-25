@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - GDG CSMU</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">⚙️</span>
+                <span class="logo-text">GDG CSMU Admin</span>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="https://gdgweb.netlify.app/" class="nav-link" target="_blank">🌐 Main Website</a></li>
+                <li><button id="darkModeBtn" class="dark-mode-btn" title="Toggle Dark Mode">🌙</button></li>
+                <li><a href="index.html" class="nav-link auth-link" onclick="logoutAdmin()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Admin Header -->
+    <section class="admin-header">
+        <div class="container">
+            <h1>Admin Dashboard</h1>
+            <p>Manage users, view registrations, and monitor community activity</p>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="admin-stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card slide-in-up">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <h3 id="totalUsersCount">0</h3>
+                        <p>Total Users</p>
+                    </div>
+                </div>
+
+                <div class="stat-card slide-in-up">
+                    <div class="stat-icon">🔐</div>
+                    <div class="stat-content">
+                        <h3 id="loggedInUsersCount">0</h3>
+                        <p>Currently Logged In</p>
+                    </div>
+                </div>
+
+                <div class="stat-card slide-in-up">
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-content">
+                        <h3 id="eventRegistrationsCount">0</h3>
+                        <p>Event Registrations</p>
+                    </div>
+                </div>
+
+                <div class="stat-card slide-in-up">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-content">
+                        <h3 id="totalEventsCount">0</h3>
+                        <p>Total Events</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Admin Content -->
+    <section class="admin-content">
+        <div class="container">
+            <div class="admin-grid">
+                <!-- Logged In Users -->
+                <div class="admin-panel">
+                    <div class="panel-header">
+                        <h2>🔐 Logged In Users</h2>
+                        <p class="panel-subtitle">Active user sessions</p>
+                    </div>
+                    <div class="panel-body">
+                        <div id="loggedInUsersList" class="users-list">
+                            <!-- Logged in users will be populated here -->
+                        </div>
+                        <div id="noLoggedInUsers" class="empty-state">
+                            <p>No users currently logged in</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Users -->
+                <div class="admin-panel">
+                    <div class="panel-header">
+                        <h2>👥 All Registered Users</h2>
+                        <button class="btn btn-small" onclick="toggleAddUserForm()">+ Add User</button>
+                    </div>
+                    <div class="panel-body">
+                        <div id="allUsersList" class="users-list">
+                            <!-- All users will be populated here -->
+                        </div>
+                        <div id="noUsers" class="empty-state">
+                            <p>No users registered yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add User Form -->
+            <div class="admin-panel add-user-panel" id="addUserPanel" style="display: none;">
+                <div class="panel-header">
+                    <h2>➕ Add New User</h2>
+                    <button class="close-btn" onclick="toggleAddUserForm()">&times;</button>
+                </div>
+                <div class="panel-body">
+                    <form id="addUserForm" class="admin-form">
+                        <div class="form-group">
+                            <label for="newUsername">Username *</label>
+                            <input type="text" id="newUsername" name="username" placeholder="Enter username" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newEmail">Email *</label>
+                            <input type="email" id="newEmail" name="email" placeholder="Enter email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPassword">Password *</label>
+                            <div class="password-input">
+                                <input type="password" id="newPassword" name="password" placeholder="Enter password" required>
+                                <button type="button" class="toggle-password" onclick="togglePassword('newPassword')">👁️</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newFullName">Full Name</label>
+                            <input type="text" id="newFullName" name="fullName" placeholder="Enter full name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newUserRole">Role</label>
+                            <select id="newUserRole" name="role">
+                                <option value="user">User</option>
+                                <option value="moderator">Moderator</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Add User</button>
+                            <button type="button" class="btn btn-secondary" onclick="toggleAddUserForm()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Event Registrations -->
+            <div class="admin-panel">
+                <div class="panel-header">
+                    <h2>📋 Event Registrations</h2>
+                    <p class="panel-subtitle">Users registered for events</p>
+                </div>
+                <div class="panel-body">
+                    <div id="eventRegistrationsList" class="registrations-list">
+                        <!-- Event registrations will be populated here -->
+                    </div>
+                    <div id="noRegistrations" class="empty-state">
+                        <p>No event registrations yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>GDG CSMU Admin</h3>
+                    <p>Community Management Panel</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="https://gdgweb.netlify.app/">Main Website</a></li>
+                        <li><a href="index.html">Home</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Admin</h4>
+                    <ul>
+                        <li><a href="#" onclick="refreshData()">Refresh Data</a></li>
+                        <li><a href="index.html" onclick="logoutAdmin()">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Google Developer Group CSMU Admin Panel. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

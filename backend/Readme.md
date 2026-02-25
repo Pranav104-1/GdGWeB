@@ -1,164 +1,508 @@
-# GDG Website Backend
+# GDG CSMU Backend API Documentation
 
-Complete authentication backend with email-based OTP verification system.
+A production-ready Node.js/Express backend API for the GDG CSMU website with comprehensive authentication, event management, and admin dashboard features.
 
-## 🚀 Quick Start
+---
 
-### 1. Install Dependencies
+## 🚀 Features
+
+### ✅ Authentication System
+- **Password-based login/registration** with bcrypt hashing
+- **OTP-based authentication** via email (6-digit, 5-minute expiry)
+- **JWT token generation** for secure API access
+- **Refresh token support** for long-lived sessions
+- **Email verification** with Nodemailer
+
+### 👥 User Management
+- User profiles with roles (admin, user)
+- User verification system
+- Secure password handling
+- User activity tracking
+
+### 🎯 Event Management
+- Create, read, update, delete events (admin only)
+- Event registration for users
+- Capacity management
+- Event status tracking (upcoming, ongoing, completed)
+- User registration history
+
+### 🔐 Admin Dashboard Backend
+- View all registered users
+- Delete users from system
+- Manage events
+- View all event registrations
+- Dashboard statistics
+- User role management
+
+### 🛡️ Security Features
+- CORS protection
+- Helmet security headers
+- Rate limiting (general + auth-specific)
+- NoSQL injection prevention
+- Input validation & sanitization
+- JWT authentication middleware
+- Role-based access control
+
+---
+
+## 📋 Tech Stack
+
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: JWT + OTP
+- **Password Hashing**: bcrypt
+- **Email Service**: Nodemailer
+- **Security**: Helmet, CORS, Rate Limiting
+- **Validation**: express-validator
+
+---
+
+## 📦 Installation
+
+### Prerequisites
+- Node.js >= 16.0.0
+- npm >= 8.0.0
+- MongoDB (local or Atlas)
+
+### Step 1: Install Dependencies
+
 ```bash
+cd backend
 npm install
 ```
 
-### 2. Configure Environment Variables
-Create `.env` file with your configuration:
-```
-PORT=4565
-NODE_ENV=development
-FRONTEND_URL=http://localhost:5000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-REFRESH_TOKEN_SECRET=your_refresh_token_secret
-EMAIL_USER=your_gmail@gmail.com
-EMAIL_PASSWORD=your_gmail_app_password
-CORS_ORIGIN=http://localhost:5000
+### Step 2: Configure Environment Variables
+
+```bash
+# Copy the example file
+cp .env.example .env
+
+# Edit .env and update these values:
+# - MONGODB_URI (your MongoDB connection string)
+# - JWT_SECRET (generate a strong random string)
+# - EMAIL_SERVICE, EMAIL_USER, EMAIL_PASSWORD (for OTP)
+# - FRONTEND_URL (your frontend URL)
 ```
 
-### 3. Start Server
+### Step 3: Start the Server
+
+**Development mode** (with auto-reload):
 ```bash
 npm run dev
 ```
 
-Server runs on: `http://localhost:4565`
+**Production mode**:
+```bash
+npm start
+```
+
+The API will be available at: `http://localhost:4565`
 
 ---
 
-## 📚 API Documentation
+## 🔌 API Endpoints
 
-### Authentication Endpoints
-
-#### Send OTP
+### 📍 Base URL
 ```
-POST /api/auth/send-otp
-Body: { "email": "user@example.com" }
-```
-
-#### Verify OTP & Register
-```
-POST /api/auth/verify-otp
-Body: { "email", "otp", "username", "password", "firstName", "lastName", "phone" }
-```
-
-#### Login
-```
-POST /api/auth/login
-Body: { "email": "user@example.com", "password": "password123" }
-```
-
-#### Logout (Protected)
-```
-POST /api/auth/logout
-Header: Authorization: Bearer token
-```
-
-#### Get Current User (Protected)
-```
-GET /api/auth/me
-Header: Authorization: Bearer token
-```
-
-#### Update Profile (Protected)
-```
-PUT /api/auth/profile
-Header: Authorization: Bearer token
-Body: { "firstName", "lastName", "phone", "areasOfInterest" }
-```
-
-#### Forgot Password
-```
-POST /api/auth/forgot-password
-Body: { "email": "user@example.com" }
-```
-
-#### Reset Password
-```
-POST /api/auth/reset-password
-Body: { "token": "reset_token", "newPassword": "newpassword123" }
-```
-
-#### Refresh Token
-```
-POST /api/auth/refresh-token
+http://localhost:4565/api
 ```
 
 ---
 
-## 🔐 Features
+## 🔐 Authentication Endpoints
 
-✅ Email-based OTP verification (6-digit, 10 min expiry)
-✅ Secure password hashing with bcryptjs
-✅ JWT token authentication (24h expiry)
-✅ Refresh token mechanism (7d expiry)
-✅ Password reset with secure tokens
-✅ User profile management
-✅ CORS fully configured
-✅ MongoDB with Mongoose
-✅ Professional HTML email templates
-✅ Rate limiting ready
-
----
-
-## 📁 Project Structure
-
+### 1. Register User
 ```
-backend/
-├── src/
-│   ├── controllers/
-│   │   └── auth.controllers.js    # All auth logic
-│   ├── routes/
-│   │   └── auth.routes.js         # API routes
-│   ├── middlewares/
-│   │   └── auth.middlewares.js    # JWT verification
-│   ├── models/
-│   │   └── auth.models.js         # User schema
-│   ├── utils/
-│   │   ├── email.utils.js         # Email templates
-│   │   └── token.utils.js         # Token generation
-│   └── db/
-│       └── db.js                  # MongoDB connection
-├── index.js                       # Server entry point
-├── package.json
-├── .env                          # Environment config
-└── Readme.md
+POST /auth/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+Response (201):
+{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "user": { /* user object */ },
+    "token": "jwt_token_here",
+    "refreshToken": "refresh_token_here"
+  }
+}
 ```
 
+### 2. Login with Password
+```
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+Response (200):
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "user": { /* user object */ },
+    "token": "jwt_token_here",
+    "refreshToken": "refresh_token_here"
+  }
+}
+```
+
+### 3. Send OTP
+```
+POST /auth/send-otp
+Content-Type: application/json
+
+{
+  "email": "user@example.com"
+}
+
+Response (200):
+{
+  "success": true,
+  "message": "OTP sent successfully"
+}
+```
+
+### 4. Verify OTP & Login
+```
+POST /auth/verify-otp
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "otp": "123456"
+}
+
+Response (200):
+{
+  "success": true,
+  "message": "OTP verified successfully",
+  "data": {
+    "user": { /* user object */ },
+    "token": "jwt_token_here",
+    "refreshToken": "refresh_token_here"
+  }
+}
+```
+
+### 5. Get Current User
+```
+GET /auth/me
+Authorization: Bearer {token}
+
+Response (200):
+{
+  "success": true,
+  "message": "User retrieved successfully",
+  "data": {
+    "user": { /* user object */ }
+  }
+}
+```
+
+### 6. Logout
+```
+POST /auth/logout
+Authorization: Bearer {token}
+
+Response (200):
+{
+  "success": true,
+  "message": "Logged out successfully"
+}
+```
+
 ---
 
-## 🔧 Technologies Used
+## 🎯 Event Endpoints
 
-- **Node.js & Express.js** - Server framework
-- **MongoDB & Mongoose** - Database
-- **JWT** - Token authentication
-- **bcryptjs** - Password hashing
-- **Nodemailer** - Email sending
-- **CORS** - Cross-origin requests
-- **Dotenv** - Environment variables
+### 1. Get All Events
+```
+GET /events
+
+Response (200):
+{
+  "success": true,
+  "message": "Events retrieved successfully",
+  "data": {
+    "events": [ /* array of events */ ],
+    "count": 5
+  }
+}
+```
+
+### 2. Get Single Event
+```
+GET /events/:id
+
+Response (200):
+{
+  "success": true,
+  "message": "Event retrieved successfully",
+  "data": {
+    "event": { /* event object */ },
+    "registrationCount": 25
+  }
+}
+```
+
+### 3. Register for Event (Protected)
+```
+POST /events/:eventId/register
+Authorization: Bearer {token}
+
+Response (201):
+{
+  "success": true,
+  "message": "Registered for event successfully",
+  "data": {
+    "registration": { /* registration object */ }
+  }
+}
+```
+
+### 4. Check Registration Status (Protected)
+```
+GET /events/:eventId/is-registered
+Authorization: Bearer {token}
+
+Response (200):
+{
+  "success": true,
+  "message": "Registration status retrieved",
+  "data": {
+    "isRegistered": true,
+    "registration": { /* registration object or null */ }
+  }
+}
+```
+
+### 5. Get User's Events (Protected)
+```
+GET /events/user/my-events
+Authorization: Bearer {token}
+
+Response (200):
+{
+  "success": true,
+  "message": "User events retrieved successfully",
+  "data": {
+    "events": [ /* array of registered events */ ],
+    "count": 3
+  }
+}
+```
+
+### 6. Cancel Event Registration (Protected)
+```
+DELETE /events/registrations/:registrationId
+Authorization: Bearer {token}
+
+Response (200):
+{
+  "success": true,
+  "message": "Registration cancelled successfully"
+}
+```
+
+### 7. Create Event (Admin Only)
+```
+POST /events
+Authorization: Bearer {admin_token}
+Content-Type: application/json
+
+{
+  "title": "Web Development Workshop",
+  "description": "Learn modern web development",
+  "date": "2024-03-15T10:00:00Z",
+  "location": "CSMU Campus, Hall A",
+  "maxParticipants": 50
+}
+
+Response (201):
+{
+  "success": true,
+  "message": "Event created successfully",
+  "data": {
+    "event": { /* event object */ }
+  }
+}
+```
+
+### 8. Update Event (Admin Only)
+```
+PUT /events/:id
+Authorization: Bearer {admin_token}
+Content-Type: application/json
+
+{
+  "title": "Updated Title",
+  "maxParticipants": 75
+}
+
+Response (200):
+{
+  "success": true,
+  "message": "Event updated successfully",
+  "data": {
+    "event": { /* updated event object */ }
+  }
+}
+```
+
+### 9. Delete Event (Admin Only)
+```
+DELETE /events/:id
+Authorization: Bearer {admin_token}
+
+Response (200):
+{
+  "success": true,
+  "message": "Event deleted successfully"
+}
+```
 
 ---
 
-## 📊 User Schema
+## 👑 Admin Endpoints
 
+**All admin endpoints require:**
+```
+Authorization: Bearer {admin_token}
+```
+
+### 1. Get All Users
+```
+GET /admin/users
+
+Response (200): Array of all users with count
+```
+
+### 2. Get User by ID
+```
+GET /admin/users/:id
+
+Response (200): User details + their registrations
+```
+
+### 3. Delete User
+```
+DELETE /admin/users/:id
+
+Response (200): User deleted
+```
+
+### 4. Update User Role
+```
+PUT /admin/users/:id/role
+Content-Type: application/json
+
+{
+  "role": "admin" // or "user"
+}
+
+Response (200): Updated user
+```
+
+### 5. Get All Registrations
+```
+GET /admin/registrations
+
+Response (200): All registrations with user and event details
+```
+
+### 6. Get Event Registrations
+```
+GET /admin/events/:eventId/registrations
+
+Response (200): Registrations for specific event
+```
+
+### 7. Get Dashboard Statistics
+```
+GET /admin/statistics
+
+Response (200):
+{
+  "success": true,
+  "data": {
+    "totalUsers": 150,
+    "totalAdmins": 3,
+    "regularUsers": 147,
+    "totalEvents": 12,
+    "upcomingEvents": 5,
+    "totalRegistrations": 450,
+    "recentRegistrations": [ /* last 10 */ ]
+  }
+}
+```
+
+---
+
+## 📊 Database Models
+
+### User Model
 ```javascript
 {
-  username: String (required, unique),
-  email: String (required, unique),
-  password: String (hashed),
-  isEmailVerified: Boolean,
-  firstName: String,
-  lastName: String,
-  phone: String,
-  areasOfInterest: [String],
+  name: String,
+  email: String (unique, lowercase),
+  password: String (hashed, optional for OTP),
+  role: String ("user" | "admin"),
+  isVerified: Boolean,
   profileImage: String,
-  role: String (user/organizer/admin),
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+### Event Model
+```javascript
+{
+  title: String,
+  description: String,
+  date: Date,
+  location: String,
+  maxParticipants: Number,
+  currentParticipants: Number,
+  createdBy: ObjectId (User),
+  image: String,
+  status: String ("upcoming" | "ongoing" | "completed"),
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+### Registration Model
+```javascript
+{
+  userId: ObjectId (User),
+  eventId: ObjectId (Event),
+  registeredAt: Date,
+  status: String ("registered" | "attended" | "cancelled"),
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+### OTP Model
+```javascript
+{
+  email: String,
+  otp: String (6-digit),
+  expiresAt: Date (5 minutes),
+  attempts: Number,
+  maxAttempts: Number (default: 3),
+  isVerified: Boolean,
   createdAt: Date,
   updatedAt: Date
 }
@@ -166,234 +510,245 @@ backend/
 
 ---
 
-## 🌐 CORS Setup
+## 🔒 Security Best Practices
 
-Configured to accept requests from frontend with:
-- ✅ Credentials enabled (cookies)
-- ✅ All HTTP methods (GET, POST, PUT, DELETE)
-- ✅ Authorization headers
-- ✅ Content-Type headers
+### Environment Variables
+- Never commit `.env` file to version control
+- Use strong, random JWT_SECRET (min 32 characters)
+- Rotate secrets periodically
+
+### API Usage
+- Always use HTTPS in production
+- Include JWT token in Authorization header: `Bearer {token}`
+- Implement rate limiting on client side
+
+### Email Configuration
+- Use app-specific passwords (not main account password)
+- For Gmail: https://myaccount.google.com/apppasswords
+- Enable 2-factor authentication
+
+### MongoDB
+- Use MongoDB Atlas with network access controls
+- Enable authentication
+- Use connection string with credentials
+
+---
+
+## 🧪 Testing Endpoints
+
+### Using Postman / cURL
+
+```bash
+# Test API Health
+curl http://localhost:4565/api/health
+
+# Register a user
+curl -X POST http://localhost:4565/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "test123456"
+  }'
+
+# Send OTP
+curl -X POST http://localhost:4565/api/auth/send-otp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com"
+  }'
+```
+
+---
+
+## 🐛 Error Handling
+
+All endpoints follow standard HTTP status codes:
+
+- **200 OK** - Successful GET/PUT/PATCH
+- **201 Created** - Successful POST
+- **400 Bad Request** - Invalid input
+- **401 Unauthorized** - Missing/invalid token
+- **403 Forbidden** - Insufficient permissions
+- **404 Not Found** - Resource not found
+- **409 Conflict** - Resource already exists
+- **500 Internal Server Error** - Server error
+
+Error response format:
+```json
+{
+  "success": false,
+  "message": "Error description here"
+}
+```
+
+---
+
+## 📝 Environment Setup Guide
+
+### For Development
+
+1. **MongoDB Local Setup**
+   ```bash
+   # Install MongoDB Community Edition
+   # macOS: brew install mongodb-community
+   # Windows: Download from https://www.mongodb.com/try/download/community
+   # Linux: Follow official MongoDB documentation
+   
+   # Start MongoDB
+   mongod
+   ```
+
+2. **Email Configuration (Gmail)**
+   - Create Gmail account or use existing
+   - Go to: https://myaccount.google.com/apppasswords
+   - Select Mail + Windows/Mac/Linux
+   - Copy the 16-character password
+   - Add to .env:
+     ```
+     EMAIL_SERVICE=gmail
+     EMAIL_USER=your-email@gmail.com
+     EMAIL_PASSWORD=16-char-app-password
+     ```
+
+3. **Generate JWT Secret**
+   ```bash
+   # Generate secure random string
+   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+   ```
+
+### For Production
+
+1. **MongoDB Atlas**
+   - Create account at https://www.mongodb.com/cloud/atlas
+   - Create cluster
+   - Get connection string
+   - Add to .env as MONGODB_URI
+
+2. **Email Service**
+   - Use SendGrid or AWS SES for better deliverability
+   - Or use Gmail with app-specific password
+
+3. **Environment Variables**
+   - Set strong, random JWT secrets
+   - Use production URLs
+   - Enable HTTPS
+
+---
+
+## 📚 Project Structure
+
+```
+backend/
+├── config/
+│   └── database.js           # MongoDB connection
+├── controllers/
+│   ├── auth.controllers.js   # Auth logic
+│   ├── event.controllers.js  # Event CRUD
+│   ├── admin.controllers.js  # Admin functions
+│   └── registration.controllers.js # Registration logic
+├── middleware/
+│   ├── auth.middleware.js    # JWT verification
+│   └── errorHandler.js       # Error handling
+├── models/
+│   ├── User.js              # User schema
+│   ├── Event.js             # Event schema
+│   ├── Registration.js       # Registration schema
+│   └── OTP.js               # OTP schema
+├── routes/
+│   ├── auth.routes.js       # Auth endpoints
+│   ├── event.routes.js      # Event endpoints
+│   └── admin.routes.js      # Admin endpoints
+├── services/
+│   ├── email.service.js     # Email sending
+│   ├── token.service.js     # JWT generation
+│   └── otp.service.js       # OTP management
+├── utils/
+│   ├── validators.js        # Input validation
+│   ├── responseHandler.js   # Response formatting
+│   └── errors.js            # Error classes
+├── app.js                   # Express setup
+├── server.js                # Server startup
+├── package.json             # Dependencies
+├── .env.example             # Env template
+└── README.md                # This file
+```
 
 ---
 
 ## 🚀 Deployment
 
-See [DEPLOYMENT_GUIDE.md](../DEPLOYMENT_GUIDE.md) for:
-- Heroku deployment
-- Railway deployment
-- Render deployment
-- Environment setup
-- Production checklist
+### Heroku Deployment
+
+```bash
+# Create Heroku account and install CLI
+# Login
+heroku login
+
+# Create app
+heroku create your-app-name
+
+# Set environment variables
+heroku config:set JWT_SECRET=your_secret
+heroku config:set MONGODB_URI=your_mongodb_uri
+# ... set other variables
+
+# Deploy
+git push heroku main
+```
+
+### Railway or Render Deployment
+
+- Connect GitHub repository
+- Set environment variables in dashboard
+- Auto-deploys on push
+
+### Docker Deployment
+
+```bash
+# Create Dockerfile
+# Build and run Docker image
+docker build -t gdg-csmu-backend .
+docker run -p 4565:4565 gdg-csmu-backend
+```
 
 ---
 
-## 📞 Support
+## 📞 Support & Troubleshooting
 
-For issues check:
-1. `.env` file has all required variables
-2. MongoDB connection string is valid
-3. Gmail app password is correct
-4. Frontend FRONTEND_URL matches in .env
+### Common Issues
 
-**Last Updated:** February 2026
+1. **"Port 4565 already in use"**
+   - Kill existing process: `lsof -i :4565` then `kill -9 <PID>`
+   - Or change PORT in .env
 
-```
+2. **"Cannot connect to MongoDB"**
+   - Ensure MongoDB is running
+   - Check MONGODB_URI in .env
+   - Verify database name is correct
 
-**Request Body:**
+3. **"Email not sending"**
+   - Check EMAIL_USER and EMAIL_PASSWORD
+   - For Gmail: use app-specific password
+   - Check email service in .env
 
-```json
-{
-  "username": "string"
-}
-```
+4. **"JWT token errors"**
+   - Ensure token is included in Authorization header
+   - Format: `Authorization: Bearer <token>`
+   - Check JWT_SECRET matches between server and tokens
 
-**Response:**
+---
 
-```json
-{
-  "message": "User registered successfully",
-  "user": {
-    "_id": "string",
-    "username": "string"
-  },
-  "token": "string",
-  "userId": "string"
-}
-```
+## 📄 License
 
-#### Login
+MIT License - Feel free to use this project
 
-```http
-POST /auth/login
-```
+---
 
-**Request Body:**
+## 👥 Contributing
 
-```json
-{
-  "username": "string"
-}
-```
+Contributions welcome! Please follow code structure and security practices.
 
-**Response:**
+---
 
-```json
-{
-  "message": "User logged in successfully",
-  "token": "string",
-  "userId": "string"
-}
-```
-
-#### Logout
-
-```http
-POST /auth/logout
-```
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "message": "Logged out successfully"
-}
-```
-
-### Todo Endpoints
-
-All todo endpoints require authentication. Include the JWT token in cookies.
-
-#### Create Todo
-
-```http
-POST /todos/create
-```
-
-**Request Body:**
-
-```json
-{
-  "title": "string",
-  "description": "string"
-}
-```
-
-**Response:**
-
-```json
-{
-  "message": "Todo created successfully"
-}
-```
-
-#### Update Todo
-
-```http
-PUT /todos/update/:id
-```
-
-**Parameters:**
-
-- `id`: Todo ID (string)
-
-**Request Body:**
-
-```json
-{
-  "title": "string",
-  "description": "string"
-}
-```
-
-**Response:**
-
-```json
-{
-  "message": "Todo updated successfully",
-  "todo": {
-    "_id": "string",
-    "title": "string",
-    "description": "string",
-    "userID": "string",
-    "created_at": "date"
-  }
-}
-```
-
-#### Delete Todo
-
-```http
-DELETE /todos/delete/:id
-```
-
-**Parameters:**
-
-- `id`: Todo ID (string)
-
-**Response:**
-
-```json
-{
-  "message": "Todo deleted successfully"
-}
-```
-
-#### Get User's Todos
-
-```http
-GET /todos/user/:userId
-```
-
-**Parameters:**
-
-- `userId`: User ID (string)
-
-**Response:**
-
-```json
-{
-  "todos": [
-    {
-      "_id": "string",
-      "title": "string",
-      "description": "string",
-      "userID": "string",
-      "created_at": "date"
-    }
-  ]
-}
-```
-
-## Error Responses
-
-The API returns appropriate HTTP status codes and error messages:
-
-- `400` Bad Request - Missing or invalid parameters
-- `401` Unauthorized - Missing or invalid authentication
-- `404` Not Found - Resource not found
-- `409` Conflict - Resource already exists (e.g., username)
-- `500` Internal Server Error - Server-side error
-
-## Setup
-
-1. Install dependencies:
-
-```bash
-npm install
-```
-
-2. Create a .env file with:
-
-```env
-MONGODB_URI=your_mongodb_uri
-MONGODB_DATABASE=your_database_name
-PORT=5000
-JWT_SECRET=your_jwt_secret
-```
-
-3. Start the server:
-
-```bash
-npm run dev
-```
+**Built with ❤️ for GDG CSMU Community**

@@ -212,8 +212,81 @@ class AuthAPI {
 // ==================== DARK MODE ====================
 const darkModeBtn = document.getElementById("darkModeBtn");
 
+// ==================== UPDATE NAVIGATION BASED ON LOGIN STATUS ====================
+function updateNavigationBar() {
+  const user = localStorage.getItem("user");
+  const navMenu = document.getElementById("navMenu");
+  
+  if (!navMenu) return;
+  
+  if (user) {
+    try {
+      const userData = JSON.parse(user);
+      const authLink = navMenu.querySelector(".auth-link");
+      
+      if (authLink) {
+        // Update login link to show user info
+        authLink.textContent = `👤 ${userData.email || "User"}`;
+        authLink.href = "#";
+        authLink.onclick = (e) => {
+          e.preventDefault();
+          showUserMenu(userData);
+        };
+      }
+      
+      // Add admin link if user is admin
+      if (userData.role === "admin") {
+        // Check if admin link already exists
+        const existingAdminLink = navMenu.querySelector(".admin-link");
+        if (!existingAdminLink) {
+          const adminLi = document.createElement("li");
+          const adminLink = document.createElement("a");
+          adminLink.href = "admin/admin.html";
+          adminLink.textContent = "⚙️ Admin";
+          adminLink.className = "nav-link admin-link";
+          adminLi.appendChild(adminLink);
+          
+          // Insert admin link before the dark mode button
+          const darkModeBtn = navMenu.querySelector(".dark-mode-btn");
+          if (darkModeBtn) {
+            darkModeBtn.parentElement.parentElement.insertBefore(adminLi, darkModeBtn.parentElement);
+          } else {
+            navMenu.insertBefore(adminLi, navMenu.lastElementChild);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error updating navigation:", error);
+    }
+  }
+}
+
+// Show user menu when clicking on user info
+function showUserMenu(userData) {
+  const menuOptions = [
+    { text: "Logout", action: "logout" },
+    { text: "Profile", action: "profile" }
+  ];
+  
+  // Simple action handling
+  if (confirm(`Welcome ${userData.email}!\n\nPress OK to logout`)) {
+    handleLogout();
+  }
+}
+
+// Handle logout
+function handleLogout() {
+  localStorage.removeItem("user");
+  localStorage.removeItem("token");
+  localStorage.removeItem("refreshToken");
+  window.location.href = "index.html";
+}
+
 // Load dark mode preference from localStorage
 document.addEventListener("DOMContentLoaded", () => {
+  // Update navigation bar
+  updateNavigationBar();
+  
   // ==================== HAMBURGER MENU ====================
   const hamburger = document.getElementById("hamburger");
   const navMenu = document.getElementById("navMenu");
@@ -1063,11 +1136,34 @@ async function handlePasswordLogin() {
       return;
     }
 
+    // Mark user as logged in
+    if (response.user) {
+      response.user.isLoggedIn = true;
+      response.user.loginTime = new Date().toLocaleString();
+      localStorage.setItem("user", JSON.stringify(response.user));
+      
+      // Store in users list
+      const users = JSON.parse(localStorage.getItem("gdg_users") || "[]");
+      const userIndex = users.findIndex(u => u.email === email);
+      if (userIndex !== -1) {
+        users[userIndex].isLoggedIn = true;
+        users[userIndex].loginTime = new Date().toLocaleString();
+      } else {
+        users.push(response.user);
+      }
+      localStorage.setItem("gdg_users", JSON.stringify(users));
+    }
+
     // Login successful
     showSuccessModal("Login Successful!", "Welcome back! Redirecting...");
 
     setTimeout(() => {
-      window.location.href = "index.html";
+      // Redirect to admin if admin, else home
+      if (response.user && response.user.role === "admin") {
+        window.location.href = "admin.html";
+      } else {
+        window.location.href = "index.html";
+      }
     }, 2000);
   } catch (error) {
     console.error("Error logging in:", error);
