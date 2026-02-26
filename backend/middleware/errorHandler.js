@@ -1,45 +1,31 @@
-// Custom error handler middleware
 const errorHandler = (err, req, res, next) => {
-  // Set default error
-  let error = {
-    message: err.message || "Server Error",
-    statusCode: err.statusCode || 500,
-  };
+  const error = { ...err };
+  error.message = err.message;
+
+  // Log to console for debugging
+  console.error(err);
 
   // Mongoose bad ObjectId
-  if (err.name === "CastError") {
-    error.message = "Resource not found";
-    error.statusCode = 404;
+  if (err.name === 'CastError') {
+    return res.status(400).json({ success: false, message: 'Invalid ID format' });
   }
 
   // Mongoose duplicate key
   if (err.code === 11000) {
-    error.message = `${Object.keys(err.keyPattern)[0]} already exists`;
-    error.statusCode = 400;
+    return res.status(400).json({ success: false, message: 'Email already exists' });
   }
 
   // Mongoose validation error
-  if (err.name === "ValidationError") {
-    error.message = Object.values(err.errors)
+  if (err.name === 'ValidationError') {
+    const message = Object.values(err.errors)
       .map((val) => val.message)
-      .join(", ");
-    error.statusCode = 400;
+      .join(', ');
+    return res.status(400).json({ success: false, message });
   }
 
-  // JWT errors
-  if (err.name === "JsonWebTokenError") {
-    error.message = "Invalid token";
-    error.statusCode = 401;
-  }
-
-  if (err.name === "TokenExpiredError") {
-    error.message = "Token expired";
-    error.statusCode = 401;
-  }
-
-  res.status(error.statusCode).json({
+  return res.status(error.statusCode || 500).json({
     success: false,
-    message: error.message,
+    message: error.message || 'Server Error',
   });
 };
 

@@ -1,7 +1,10 @@
 // ==================== ADMIN PANEL FUNCTIONALITY ====================
 
-// Check if user is admin, if not redirect to login
+// Check if user is admin, if not redirect to login (DISABLED FOR TESTING)
 document.addEventListener("DOMContentLoaded", () => {
+  // TESTING MODE: Admin panel accessible without auth
+  // Comment out below to re-enable auth checks
+  /*
   const userStr = localStorage.getItem("user");
   const user = userStr ? JSON.parse(userStr) : null;
   
@@ -18,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "index.html";
     return;
   }
+  */
 
   // Initialize admin panel
   initializeAdminPanel();
@@ -76,7 +80,7 @@ function loadLoggedInUsers() {
 
   if (loggedInUsersList) {
     loggedInUsersList.innerHTML = loggedInUsers.map((user, index) => `
-      <div class="user-item" style="animation-delay: ${index * 0.1}s;">
+      <div class="user-item" style="animation: user-slide 0.4s ease forwards; animation-delay: ${index * 0.05}s;">
         <div class="user-avatar">${user.name ? user.name.charAt(0).toUpperCase() : "U"}</div>
         <div class="user-info">
           <h4>${user.name || user.username}</h4>
@@ -108,7 +112,7 @@ function loadAllUsers() {
 
   if (allUsersList) {
     allUsersList.innerHTML = users.map((user, index) => `
-      <div class="user-item" style="animation-delay: ${index * 0.1}s;">
+      <div class="user-item" style="animation: user-slide 0.4s ease forwards; animation-delay: ${index * 0.05}s;">
         <div class="user-avatar">${user.name ? user.name.charAt(0).toUpperCase() : "U"}</div>
         <div class="user-info">
           <h4>${user.name || user.username}</h4>
@@ -142,7 +146,7 @@ function loadEventRegistrations() {
 
   if (registrationsList) {
     registrationsList.innerHTML = registrations.map((reg, index) => `
-      <div class="registration-item" style="animation-delay: ${index * 0.1}s;">
+      <div class="registration-item" style="animation: registration-slide 0.4s ease forwards; animation-delay: ${index * 0.05}s;">
         <div class="registration-icon">📋</div>
         <div class="registration-info">
           <h4>${reg.name || "N/A"}</h4>

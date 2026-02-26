@@ -28,7 +28,7 @@
     </nav>
 
     <!-- Admin Header -->
-    <section class="admin-header">
+    <section class="admin-header" style="animation: slide-from-left 0.6s ease;">
         <div class="container">
             <h1>Admin Dashboard</h1>
             <p>Manage users, view registrations, and monitor community activity</p>
@@ -75,7 +75,7 @@
     </section>
 
     <!-- Main Admin Content -->
-    <section class="admin-content">
+    <section class="admin-content" style="animation: fade-in 0.6s ease;">
         <div class="container">
             <div class="admin-grid">
                 <!-- Logged In Users -->
@@ -112,7 +112,7 @@
             </div>
 
             <!-- Add User Form -->
-            <div class="admin-panel add-user-panel" id="addUserPanel" style="display: none;">
+            <div class="admin-panel add-user-panel" id="addUserPanel" style="display: none; animation: form-bounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;">
                 <div class="panel-header">
                     <h2>➕ Add New User</h2>
                     <button class="close-btn" onclick="toggleAddUserForm()">&times;</button>
@@ -178,7 +178,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" style="animation: footer-slide 0.6s ease both;">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">

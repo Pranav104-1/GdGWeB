@@ -1,200 +1,111 @@
+// ==================== TYPEWRITER ANIMATION ==============
+function initTypewriter() {
+  const fullText = "Learn. Build. Connect.";
+  const titleElement = document.getElementById("typewriterTitle");
+  
+  if (!titleElement) return;
+  
+  let charIndex = 0;
+  const typingSpeed = 60; // milliseconds per character
+  const loopDelay = 3000; // delay before looping
+  const cursor = '<span class="typewriter-cursor"></span>';
+  
+  function typeCharacter() {
+    if (charIndex < fullText.length) {
+      // Type character by character with cursor
+      titleElement.innerHTML = fullText.substring(0, charIndex + 1) + cursor;
+      charIndex++;
+      setTimeout(typeCharacter, typingSpeed);
+    } else {
+      // Remove cursor and wait before restarting
+      titleElement.textContent = fullText;
+      setTimeout(() => {
+        charIndex = 0;
+        titleElement.innerHTML = cursor;
+        setTimeout(typeCharacter, typingSpeed);
+      }, loopDelay);
+    }
+  }
+  
+  // Start animation with small delay
+  setTimeout(() => {
+    typeCharacter();
+  }, 300);
+}
+
 // ==================== API CONFIGURATION ==============
-// base URL should point to /api only, not including /auth or trailing slash
-const API_BASE_URL = "https://gd-g-we-b.vercel.app/api";
+// Update this with your deployed backend URL (e.g., from Render, Railway, etc.)
+// For local development, use: http://localhost:5000
+const API_BASE_URL = "http://localhost:5000/api";
 const AUTH_API = `${API_BASE_URL}/auth`;
 
 // ==================== API HELPER CLASS ==============
 class AuthAPI {
-  // Send OTP for login
-  static async sendOTP(email) {
-    try {
-      const response = await fetch(`${AUTH_API}/send-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email }),
-      });
-      return await response.json();
-    } catch (error) {
-      console.error("Error sending OTP:", error);
-      return { error: error.message };
-    }
-  }
-
-  // Verify OTP for login
-  static async verifyOTPLogin(email, otp) {
-    try {
-      const response = await fetch(`${AUTH_API}/verify-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email, otp }),
-      });
-      const data = await response.json();
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("refreshToken", data.refreshToken);
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
-      return data;
-    } catch (error) {
-      console.error("Error verifying OTP:", error);
-      return { error: error.message };
-    }
-  }
-
   // Login with email and password
   static async login(email, password) {
     try {
       const response = await fetch(`${AUTH_API}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
-      if (data.token) {
+      if (data.success && data.token) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("refreshToken", data.refreshToken);
         localStorage.setItem("user", JSON.stringify(data.user));
       }
       return data;
     } catch (error) {
       console.error("Error logging in:", error);
-      return { error: error.message };
+      return { success: false, message: error.message };
     }
   }
 
-  // Register with email, username, password (NO OTP REQUIRED)
-  static async register(
-    email,
-    username,
-    password,
-    firstName = "",
-    lastName = "",
-    phone = "",
-  ) {
+  // Register with name, email, password
+  static async register(name, email, password) {
     try {
       const response = await fetch(`${AUTH_API}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          email,
-          username,
-          password,
-          firstName,
-          lastName,
-          phone,
-        }),
+        body: JSON.stringify({ name, email, password }),
       });
       const data = await response.json();
-      if (data.token) {
+      if (data.success && data.token) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("refreshToken", data.refreshToken);
         localStorage.setItem("user", JSON.stringify(data.user));
       }
       return data;
     } catch (error) {
       console.error("Error registering:", error);
-      return { error: error.message };
+      return { success: false, message: error.message };
     }
   }
 
   // Logout
-  static async logout() {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${AUTH_API}/logout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: "include",
-      });
-      localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("user");
-      return await response.json();
-    } catch (error) {
-      console.error("Error logging out:", error);
-      return { error: error.message };
-    }
-  }
-
-  // Forgot Password
-  static async forgotPassword(email) {
-    try {
-      const response = await fetch(`${AUTH_API}/forgot-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email }),
-      });
-      return await response.json();
-    } catch (error) {
-      console.error("Error sending reset email:", error);
-      return { error: error.message };
-    }
-  }
-
-  // Reset Password
-  static async resetPassword(token, newPassword) {
-    try {
-      const response = await fetch(`${AUTH_API}/reset-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ token, newPassword }),
-      });
-      return await response.json();
-    } catch (error) {
-      console.error("Error resetting password:", error);
-      return { error: error.message };
-    }
+  static logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    return { success: true, message: "Logged out successfully" };
   }
 
   // Get Current User
   static async getCurrentUser() {
     try {
       const token = localStorage.getItem("token");
+      if (!token) {
+        return { success: false, message: "No token found" };
+      }
       const response = await fetch(`${AUTH_API}/me`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        credentials: "include",
       });
       return await response.json();
     } catch (error) {
       console.error("Error getting current user:", error);
-      return { error: error.message };
-    }
-  }
-
-  // Update Profile
-  static async updateProfile(firstName, lastName, phone, areasOfInterest) {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${AUTH_API}/profile`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: "include",
-        body: JSON.stringify({ firstName, lastName, phone, areasOfInterest }),
-      });
-      const data = await response.json();
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
-      return data;
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      return { error: error.message };
+      return { success: false, message: error.message };
     }
   }
 
@@ -206,6 +117,28 @@ class AuthAPI {
   // Get Auth Token
   static getAuthToken() {
     return localStorage.getItem("token");
+  }
+
+  // Update profile
+  static async updateProfile(name) {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        return { success: false, message: "No token found" };
+      }
+      const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name }),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      return { success: false, message: error.message };
+    }
   }
 }
 
@@ -223,15 +156,17 @@ function updateNavigationBar() {
     try {
       const userData = JSON.parse(user);
       const authLink = navMenu.querySelector(".auth-link");
+      const profileLink = navMenu.querySelector(".profile-link");
       
       if (authLink) {
-        // Update login link to show user info
-        authLink.textContent = `👤 ${userData.email || "User"}`;
-        authLink.href = "#";
-        authLink.onclick = (e) => {
-          e.preventDefault();
-          showUserMenu(userData);
-        };
+        // Hide login link
+        authLink.style.display = "none";
+      }
+      
+      if (profileLink) {
+        // Show profile link
+        profileLink.style.display = "block";
+        profileLink.textContent = `👤 ${userData.name || userData.email}`;
       }
       
       // Add admin link if user is admin
@@ -257,6 +192,19 @@ function updateNavigationBar() {
       }
     } catch (error) {
       console.error("Error updating navigation:", error);
+    }
+  } else {
+    // Show login link when not logged in
+    const authLink = navMenu.querySelector(".auth-link");
+    const profileLink = navMenu.querySelector(".profile-link");
+    
+    if (authLink) {
+      authLink.style.display = "block";
+      authLink.textContent = "Login";
+    }
+    
+    if (profileLink) {
+      profileLink.style.display = "none";
     }
   }
 }
@@ -284,6 +232,9 @@ function handleLogout() {
 
 // Load dark mode preference from localStorage
 document.addEventListener("DOMContentLoaded", () => {
+  // Initialize typewriter animation for hero title
+  initTypewriter();
+  
   // Update navigation bar
   updateNavigationBar();
   
@@ -676,6 +627,25 @@ const newsletterForm = document.getElementById("newsletterForm");
 
 let currentFilter = "all";
 
+// ==================== DISPLAY NEXT EVENT ====================
+function displayNextEvent() {
+  const nextEventStatus = document.getElementById("nextEventStatus");
+  if (!nextEventStatus) return;
+
+  // Get next event (events are already sorted by date)
+  const nextEvent = eventsData.length > 0 ? eventsData[0] : null;
+
+  if (nextEvent) {
+    nextEventStatus.innerHTML = `
+      <strong style="font-size: 1.15rem;">📌 ${nextEvent.title}</strong><br>
+      <span style="color: #888;">📅 ${nextEvent.date} at ${nextEvent.time}</span><br>
+      <span style="color: #888;">📍 ${nextEvent.location}</span>
+    `;
+  } else {
+    nextEventStatus.textContent = "No upcoming events yet.";
+  }
+}
+
 // ==================== INITIALIZE ====================
 document.addEventListener("DOMContentLoaded", () => {
   if (eventsContainer) {
@@ -686,6 +656,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupNewsletterForm();
   setupScrollAnimations();
   setupCardClickHandlers();
+  displayNextEvent();
 });
 
 // ==================== EVENT RENDERING ====================
@@ -839,6 +810,7 @@ function setupFilterButtons() {
 
 // ==================== AUTH PAGE TOGGLE ====================
 function setupAuthToggle() {
+  // Setup login/signup toggle
   if (loginToggle && signupToggle) {
     loginToggle.addEventListener("click", () => {
       toggleAuthForm("login");
@@ -847,6 +819,23 @@ function setupAuthToggle() {
     signupToggle.addEventListener("click", () => {
       toggleAuthForm("signup");
     });
+  }
+
+  // Setup login method buttons (Email vs OTP)
+  const emailMethodBtn = document.getElementById("emailLoginMethodBtn");
+  const otpMethodBtn = document.getElementById("otpLoginMethodBtn");
+
+  if (emailMethodBtn && otpMethodBtn) {
+    emailMethodBtn.addEventListener("click", () => {
+      showLoginMethod("email");
+    });
+
+    otpMethodBtn.addEventListener("click", () => {
+      showLoginMethod("otp");
+    });
+
+    // Set initial active state
+    emailMethodBtn.classList.add("active");
   }
 }
 
@@ -1105,17 +1094,17 @@ async function handleOTPLogin(event) {
 async function handlePasswordLogin() {
   const email = document.getElementById("login-email-password").value.trim();
   const password = document.getElementById("login-password").value.trim();
-  const loginBtn = document.querySelector("#passwordLoginStep .btn-primary");
+  const loginBtn = document.querySelector("#emailLoginStep .btn-primary");
 
   if (!validateEmail(email)) {
     showFormError("login-email-pw-error", "Please enter a valid email");
     return;
   }
 
-  if (password.length < 8) {
+  if (password.length < 6) {
     showFormError(
       "login-password-error",
-      "Password must be at least 8 characters",
+      "Password must be at least 6 characters",
     );
     return;
   }
@@ -1126,10 +1115,10 @@ async function handlePasswordLogin() {
 
     const response = await AuthAPI.login(email, password);
 
-    if (response.error) {
+    if (!response.success) {
       showFormError(
         "login-email-pw-error",
-        response.error || "Invalid credentials",
+        response.message || "Invalid credentials",
       );
       loginBtn.disabled = false;
       loginBtn.textContent = "Login";
@@ -1176,26 +1165,43 @@ async function handlePasswordLogin() {
   }
 }
 
-// ==================== SHOW OTP LOGIN ==============
-function showOTPLogin() {
+// ==================== LOGIN METHOD SWITCHER ==============
+function showLoginMethod(method) {
+  // Clear all errors
   clearFormError("login-email-pw-error");
   clearFormError("login-password-error");
-
-  document.getElementById("passwordLoginStep").classList.remove("active");
-  document.getElementById("otpLoginStep").classList.add("active");
-}
-
-// ==================== SHOW PASSWORD LOGIN ==============
-function showPasswordLogin() {
   clearFormError("otp-email-error");
   clearFormError("login-otp-error");
-  document.getElementById("login-otp").value = "";
-  document.getElementById("otpInputSection").style.display = "none";
 
+  // Hide all login steps
+  document.getElementById("emailLoginStep").classList.remove("active");
   document.getElementById("otpLoginStep").classList.remove("active");
-  document.getElementById("passwordLoginStep").classList.add("active");
 
-  clearOTPLoginState();
+  // Remove active class from all method buttons
+  document.getElementById("emailLoginMethodBtn").classList.remove("active");
+  document.getElementById("otpLoginMethodBtn").classList.remove("active");
+
+  if (method === "email") {
+    document.getElementById("emailLoginStep").classList.add("active");
+    document.getElementById("emailLoginMethodBtn").classList.add("active");
+  } else if (method === "otp") {
+    document.getElementById("otpLoginStep").classList.add("active");
+    document.getElementById("otpLoginMethodBtn").classList.add("active");
+    clearFormError("otp-email-error");
+    document.getElementById("login-otp").value = "";
+    document.getElementById("otpInputSection").style.display = "none";
+    clearOTPLoginState();
+  }
+}
+
+// ==================== SHOW OTP LOGIN (Legacy) ==============
+function showOTPLogin() {
+  showLoginMethod("otp");
+}
+
+// ==================== SHOW PASSWORD LOGIN (Legacy) ==============
+function showPasswordLogin() {
+  showLoginMethod("email");
 }
 
 // ==================== CLEAR OTP LOGIN STATE ==============
@@ -1278,10 +1284,10 @@ async function handleSignup(event) {
     isValid = false;
   }
 
-  if (password.length < 8) {
+  if (password.length < 6) {
     showFormError(
       "signup-password-error",
-      "Password must be at least 8 characters",
+      "Password must be at least 6 characters",
     );
     isValid = false;
   }
@@ -1304,19 +1310,11 @@ async function handleSignup(event) {
   submitBtn.textContent = "Creating Account...";
 
   try {
-    // Register directly with password (no OTP required)
-    const username = email.split("@")[0].toLowerCase();
-    const regResp = await AuthAPI.register(
-      email,
-      username,
-      password,
-      name.split(" ")[0], // firstName
-      name.split(" ").slice(1).join(" ") || "", // lastName
-      "",
-    );
+    // Register with new API - only name, email, password required
+    const regResp = await AuthAPI.register(name, email, password);
 
-    if (regResp.error) {
-      showFormError("signup-email-error", regResp.error);
+    if (!regResp.success) {
+      showFormError("signup-email-error", regResp.message || "Registration failed");
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
       return;
