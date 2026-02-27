@@ -314,6 +314,175 @@
         display: none;
       }
     }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.3rem;
+      }
+
+      .header {
+        height: 50px;
+        padding: 0 15px;
+      }
+
+      .header-actions {
+        gap: 6px;
+      }
+
+      .header-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+      }
+
+      .editor-section {
+        width: 100%;
+      }
+
+      .preview-section {
+        display: none;
+      }
+
+      .tabs {
+        gap: 4px;
+      }
+
+      .tab {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+        flex: 0.4;
+      }
+
+      #editor {
+        padding: 12px;
+        font-size: 13px;
+      }
+
+      .controls {
+        padding: 12px;
+        gap: 8px;
+      }
+
+      button {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+      }
+
+      .console-title {
+        display: none;
+      }
+
+      .console {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 14px;
+      }
+
+      h1 {
+        font-size: 1.1rem;
+      }
+
+      .header {
+        height: 48px;
+        padding: 0 12px;
+      }
+
+      .header-actions {
+        gap: 4px;
+      }
+
+      .header-btn {
+        padding: 5px 8px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+      }
+
+      .tabs {
+        gap: 0;
+      }
+
+      .tab {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+        flex: 1;
+      }
+
+      #editor {
+        padding: 10px;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .controls {
+        flex-direction: column;
+        padding: 10px;
+        gap: 8px;
+      }
+
+      button {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+        min-height: 40px;
+      }
+
+      .main {
+        height: calc(100vh - 48px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1rem;
+        letter-spacing: 0.2px;
+      }
+
+      .header {
+        height: 45px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .header-actions {
+        gap: 3px;
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .header-btn {
+        padding: 4px 6px;
+        font-size: 0.7rem;
+        flex: 1;
+        min-width: 60px;
+      }
+
+      .tab {
+        padding: 6px 8px;
+        font-size: 0.8rem;
+      }
+
+      #editor {
+        padding: 8px;
+        font-size: 11px;
+      }
+
+      .controls {
+        padding: 8px;
+        gap: 6px;
+      }
+
+      button {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+        min-height: 38px;
+      }
+
+      .main {
+        height: calc(100vh - 45px);
+      }
+    }
   </style>
 </head>
 
