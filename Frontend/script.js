@@ -36,7 +36,7 @@ function initTypewriter() {
 // ==================== API CONFIGURATION ==============
 // Update this with your deployed backend URL (e.g., from Render, Railway, etc.)
 // For local development, use: http://localhost:5000
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://gd-g-we-b-git-main-nerepranav2420-7210s-projects.vercel.app/api";
 const AUTH_API = `${API_BASE_URL}/auth`;
 
 // ==================== API HELPER CLASS ==============
